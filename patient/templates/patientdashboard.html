@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block cssstyles %}
+<style>
+  /* Custom styles for active link highlighting */
+  .sidebar .nav-link.active {
+      background-color: #007bff;
+      color: white;
+  }
+  .content-section {
+      display: none;
+  }
+  .content-section.active {
+      display: block;
+  }
+</style>
+{% endblock %}
+
+{% block start%}
+<div class="container-fluid">
+  <div class="row">
+      <!-- Sidebar Section -->
+      <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar pt-3">
+          <div class="sidebar-sticky pt-3 min-vh-100">
+            <form id="dashboard-side" method="post" class="m-0 p-0">
+                {% csrf_token %}
+                <input type="hidden" name="fieldselected" id="fieldName" value="">
+                <ul class="nav flex-column">
+                    {% for field in sidefields %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if forloop.counter == chosenfield %}active{% endif %}" onclick="submitForm('{{forloop.counter}}'  ); return false;">{{field}}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </form>
+          </div>
+      </nav>
+
+      <!-- Main Content Section -->
+      <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 pt-3">
+        {% block fieldinfo %}
+        
+        {% endblock %}
+          <!-- <div id="user-info" class="content-section active">
+              <h2>User Information</h2>
+              <p>Details about the user.</p>
+          </div>
+          <div id="appointments" class="content-section">
+              <h2>Appointments</h2>
+              <p>List of appointments.</p>
+          </div>
+          <div id="patients" class="content-section">
+              <h2>Patients</h2>
+              <p>Details about patients registered with this ID.</p>
+          </div> -->
+      </main>
+  </div>
+</div>
+{% endblock %}
+
+{% block jscript %}
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+    function submitForm(actionValue) {
+        // Set the hidden input's value based on the clicked link
+        document.getElementById('fieldName').value = actionValue;
+        // Submit the form
+        document.getElementById('dashboard-side').submit();
+    }
+
+//   function showSection(sectionId) {
+//       // Remove active class from all links
+//       document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+//       // Add active class to the selected link
+//       document.querySelector(`[onclick="showSection('${sectionId}')"]`).classList.add('active');
+
+//       // Hide all content sections
+//       document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+//       // Show the selected content section
+//       document.getElementById(sectionId).classList.add('active');
+//   }
+</script>
+{% endblock %}

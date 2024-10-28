@@ -20,6 +20,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from home.views import *
 from account.views import *
+from patient.views import *
 
 admin.site.site_header= 'HMES Admin'
 
@@ -28,6 +29,9 @@ urlpatterns = [
     path('login/', login_page, name="login_page"),
     path('logout/', logout_page, name="logout_page"),
     path('register/', register_page, name="register_page"),
+    path('dashboard/', dashboard, name="dashboard"),
+    path('dashboard/p/', patient_db, name="patient_db"),
+    path('addapatient/', addapatient, name="addapatient"),
     path('admin/', admin.site.urls),
 ]
 
