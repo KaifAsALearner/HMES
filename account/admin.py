@@ -6,4 +6,3 @@ class userinfoDisplay(admin.ModelAdmin):
   list_display= ['user', 'mobile_number', 'role_def']
 
 admin.site.register(UserInfo, userinfoDisplay)
-

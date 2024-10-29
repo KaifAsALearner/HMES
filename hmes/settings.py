@@ -42,7 +42,8 @@ INSTALLED_APPS = [
 EXTERNAL_APPS = [
   'home',
   'account',
-  'patient'
+  'patient',
+  'doctor',
 ]
 
 INSTALLED_APPS += EXTERNAL_APPS

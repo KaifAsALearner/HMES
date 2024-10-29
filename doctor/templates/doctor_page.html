@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block cssstyles %}
+<style>
+  /* Custom styles for active link highlighting */
+  .sidebar .nav-link.active {
+      background-color: #007bff;
+      color: white;
+  }
+  .content-section {
+      display: none;
+  }
+  .content-section.active {
+      display: block;
+  }
+</style>
+{% endblock %}
+
+{% block start %}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar Section -->
+        <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar pt-3">
+            <div class="sidebar-sticky pt-3 min-vh-100">
+                <h3>Filter by Department</h3>
+                <ul class="nav flex-column">
+                <li><a class="nav-link {% if field == 0 %}active{% endif %}" href="{% url 'doctor' %}">All</a></li>
+                {% for department in departments %}
+                
+                <li class="nav-item">
+                    <a class="nav-link {% if forloop.counter == field %}active{% endif %}" href="{% url 'doctor' %}?q={{department}}&i={{forloop.counter}}">{{department}}</a>
+                </li>
+                {% endfor %}
+                </ul>
+            </div>
+        </nav>
+  
+        <!-- Main Content Section -->
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 pt-3">
+            <h3>Our Doctors</h3>
+            <div class="container mt-4">
+                <div class="row">
+                    {% for doctor in doctors %}
+                    <div class="col-auto mb-3">
+                        <div class="card" style="width: 18rem;">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ doctor.user.first_name}} {{doctor.user.last_name}}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">{{ doctor.specialization}}</h6>
+                                <h6 class="card-subtitle mb-2 text-muted">{{ doctor.dayofstarting | timesince}}</h6>
+                                <p class="card-text">
+                                    {% for department in doctor.department.all %}
+                                    <p class="m-0"> {{department}} </p>
+                                    {% endfor %}
+                                </p>
+                                <a href="#" class="card-link">Card link</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </main>
+    </div>
+  </div>
+
+
+
+
+{% endblock %}

@@ -16,8 +16,8 @@ def patient_db(request):
     'userInfo': UserInfo.objects.filter(user= request.user)[0],
     'patients': Patient.objects.filter(user= request.user).order_by('first_name','last_name')
   }
-  if request.method == 'POST':
-    information=request.POST
+  if not request.GET.get('fieldselected') == None:
+    information=request.GET
     chosenfield=int(information.get('fieldselected')[0])
     context['chosenfield']= chosenfield
     templte="field"+chr(chosenfield + 48)+".html"

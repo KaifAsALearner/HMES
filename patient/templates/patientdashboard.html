@@ -21,8 +21,8 @@
       <!-- Sidebar Section -->
       <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar pt-3">
           <div class="sidebar-sticky pt-3 min-vh-100">
-            <form id="dashboard-side" method="post" class="m-0 p-0">
-                {% csrf_token %}
+            <form id="dashboard-side" method="get" class="m-0 p-0">
+                <!-- {% csrf_token %} -->
                 <input type="hidden" name="fieldselected" id="fieldName" value="">
                 <ul class="nav flex-column">
                     {% for field in sidefields %}
