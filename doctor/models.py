@@ -20,5 +20,21 @@ class Doctor(models.Model):
   department = models.ManyToManyField(Department)
   specialization = models.TextField(blank= True, null= True)
   dayofstarting= models.DateField(auto_now= True)
+  avatar=models.ImageField(default="default_doctor_image.jpeg")
+  Bio=models.TextField(default="",blank= True, null= True)
+  Awards=models.TextField(default="",blank= True, null= True)
   def __str__(self):
     return self.user.first_name
+  
+
+class AppointmentSlot(models.Model):
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    day_of_week = models.CharField(max_length=10, choices=[
+         ('MONDAY', 'Monday'), ('TUESDAY', 'Tuesday'), ('WEDNESDAY', 'Wednesday'),
+         ('THURSDAY', 'Thursday'), ('FRIDAY', 'Friday'), ('SATURDAY', 'Saturday'), ('SUNDAY', 'Sunday')
+    ])
+    slot= models.CharField(max_length=10, choices=[('MORNING','Morning'), ('AFTERNOON', 'Afternoon'), ('EVENING',"Evening")])
+    max_bookings = models.PositiveIntegerField(default=10)
+
+    def __str__(self):
+        return f"{self.doctor.user} - {self.day_of_week} {self.slot}"

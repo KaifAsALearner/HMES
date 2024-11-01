@@ -43,7 +43,7 @@
                 <div class="row">
                     {% for doctor in doctors %}
                     <div class="col-auto mb-3">
-                        <div class="card" style="width: 18rem;">
+                        <div class="card" style="width: 20.9rem;">
                             <div class="card-body">
                                 <h5 class="card-title">{{ doctor.user.first_name}} {{doctor.user.last_name}}</h5>
                                 <h6 class="card-subtitle mb-2 text-muted">{{ doctor.specialization}}</h6>
@@ -53,7 +53,8 @@
                                     <p class="m-0"> {{department}} </p>
                                     {% endfor %}
                                 </p>
-                                <a href="#" class="card-link">Card link</a>
+                                <a type="button" class="btn btn-primary" href="{% url 'doctor-profile' doctor.id %}" data-mdb-ripple-init>View Profile</a>
+                                <a type="button" class="btn btn-outline-info" data-mdb-ripple-init data-mdb-ripple-color="dark">Book An Appointment</a>
                             </div>
                         </div>
                     </div>

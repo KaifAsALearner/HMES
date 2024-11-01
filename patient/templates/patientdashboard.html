@@ -22,12 +22,10 @@
       <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar pt-3">
           <div class="sidebar-sticky pt-3 min-vh-100">
             <form id="dashboard-side" method="get" class="m-0 p-0">
-                <!-- {% csrf_token %} -->
-                <input type="hidden" name="fieldselected" id="fieldName" value="">
                 <ul class="nav flex-column">
                     {% for field in sidefields %}
                     <li class="nav-item">
-                        <a class="nav-link {% if forloop.counter == chosenfield %}active{% endif %}" onclick="submitForm('{{forloop.counter}}'  ); return false;">{{field}}</a>
+                        <a class="nav-link {% if forloop.counter == chosenfield %}active{% endif %}" href="{% url 'patient_db' %}?fieldselected={{forloop.counter}}">{{field}}</a>
                     </li>
                     {% endfor %}
                 </ul>
@@ -55,28 +53,4 @@
       </main>
   </div>
 </div>
-{% endblock %}
-
-{% block jscript %}
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script>
-    function submitForm(actionValue) {
-        // Set the hidden input's value based on the clicked link
-        document.getElementById('fieldName').value = actionValue;
-        // Submit the form
-        document.getElementById('dashboard-side').submit();
-    }
-
-//   function showSection(sectionId) {
-//       // Remove active class from all links
-//       document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-//       // Add active class to the selected link
-//       document.querySelector(`[onclick="showSection('${sectionId}')"]`).classList.add('active');
-
-//       // Hide all content sections
-//       document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
-//       // Show the selected content section
-//       document.getElementById(sectionId).classList.add('active');
-//   }
-</script>
 {% endblock %}

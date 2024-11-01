@@ -25,14 +25,11 @@ from patient.views import *
 admin.site.site_header= 'HMES Admin'
 
 urlpatterns = [
-    path('', home, name='home'),
-    path('login/', login_page, name="login_page"),
-    path('logout/', logout_page, name="logout_page"),
-    path('register/', register_page, name="register_page"),
-    path('dashboard/', dashboard, name="dashboard"),
-    path('dashboard/p/', patient_db, name="patient_db"),
-    path('addapatient/', addapatient, name="addapatient"),
+    path('',include('home.urls')),
+    path('',include('account.urls')),
+    path('',include('patient.urls')),
     path('',include('doctor.urls')),
+    path('',include('appointment.urls')),
     path('admin/', admin.site.urls),
 ]
 

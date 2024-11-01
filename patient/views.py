@@ -50,6 +50,8 @@ def addapatient(request):
     )
     patient.save()
 
+    if request.GET.get('next') != None:
+      return redirect(request.GET.get('next'))  
     return redirect('/dashboard/p/')
 
   return render(request, 'addapatient.html')

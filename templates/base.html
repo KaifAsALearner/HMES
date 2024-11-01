@@ -25,7 +25,7 @@
                     <a class="nav-link" href="#">Contact</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/doctor/">Doctors</a>
+                    <a class="nav-link" href="{% url 'doctor' %}">Doctors</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Link</a>
@@ -35,8 +35,8 @@
 
         <div class="input-group rounded navbar-collapse collapse w-100 order-2 dual-collapse2">
           <form class="row m-0 p-0" action="/doctor/">
-              <div class="col-sm-11 m-0 p-0"><input type="search" class="form-control rounded-0" placeholder="Search" aria-label="Search" name="q" /></div>
-              <div class="col-sm-1 m-0 p-0"><button type="button" class="btn btn-outline-primary rounded-0" data-mdb-ripple-init>🔍</button></div>
+              <div class="col-sm-11 m-0 p-0"><input type="search" class="form-control rounded-0" placeholder="Search for Doctors"  aria-label="Search" name="q" /></div>
+              <div class="col-sm-1 m-0 p-0"><button type="submit" class="btn btn-outline-primary rounded-0" data-mdb-ripple-init>🔍</button></div>
           </form>
         </div>
 
@@ -54,13 +54,13 @@
             <ul class="navbar-nav ms-auto">
               {% if request.user.is_authenticated %}
                 <li class="nav-item">
-                  <a class="nav-link" href="/dashboard/">
+                  <a class="nav-link" href="{% url 'dashboard' %}">
                     <button type="button" class="btn btn-outline-primary">Dashboard</button>
                   </a>
                 </li>
               {% endif %}
                 <li class="nav-item">
-                  <a class="nav-link" href="#">
+                  <a class="nav-link" href="{% url 'doctor' %}">
                     <button type="button" class="btn btn-success">Book An Appointment</button>
                   </a>
                 </li>
