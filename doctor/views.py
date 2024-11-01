@@ -4,8 +4,11 @@ from django.shortcuts import render
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from doctor.models import *
+from appointment.models import *
 from django.db.models import Q
 from .forms import *
+from django.utils import timezone
+from datetime import date
 
 # Create your views here.
 def doctor(request):
@@ -23,8 +26,11 @@ def doctor(request):
     return render(request,'doctor_page.html',context)
 
 
-def doctor_dashboard(request):
-    return
+def doctor_dashboard(request,pk):
+    doctor=Doctor.objects.get(id=pk)
+    appointments = Appointment.objects.filter(slot__doctor=doctor, date=date.today()).order_by('date')
+    context={'doctor':doctor,'appointments':appointments}
+    return render(request,'doctor_dashboard.html',context)
 
 def doctor_profile(request,pk):
     doctor=Doctor.objects.get(id=int(pk))
@@ -42,3 +48,9 @@ def doctor_update(request,pk):
        
     context={'form':form}
     return render(request,'doctor_update.html',context)
+
+def appointment_overview(request,pk):
+    doctor=Doctor.objects.get(id=pk)
+    appointments = Appointment.objects.filter(slot__doctor=doctor).order_by('date')
+    context={'appointments':appointments,'doctor':doctor}
+    return render(request,'appointment_overview.html',context)

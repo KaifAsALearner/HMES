@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block start %}
+<div class="container my-5">
+    <h2>Edit Availability for Dr. {{ doctor.user.first_name }}</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Day</th>
+                    <th>Morning</th>
+                    <th>Afternoon</th>
+                    <th>Evening</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for day in days %}
+                <tr>
+                    <td>{{ day|title }}</td>
+                    {% for session in sessions %}
+                    <td>
+                        <input type="checkbox" 
+                               name="{{ day }}_{{ session }}" 
+                               {% if day|add:"_"|add:session in available_slots %}checked{% endif %}
+                               id="btn-check-outlined-{{day}}-{{session}}"
+                               class="btn-check">
+                        <label class="btn btn-outline-primary py-3 px-5" for="btn-check-outlined-{{day}}-{{session}}" value="here"></label>
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" class="btn btn-primary">Update Availability</button>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+{% endblock %}

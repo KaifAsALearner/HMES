@@ -8,3 +8,6 @@ class Patient(models.Model):
   last_name= models.CharField(max_length= 255, blank= True, null= True)
   dob= models.DateField(default= None)
   sex= models.CharField(max_length= 10, choices= [('MALE', 'Male'), ('FEMALE', 'Female'), ('OTHER', 'Other')], default= 'FEMALE')
+
+  def __str__(self) -> str:
+    return self.first_name

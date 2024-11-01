@@ -6,5 +6,9 @@ from doctor.models import *
 class doctorDisplay(admin.ModelAdmin):
   list_display= ['user', 'dob', 'sex']
 
+class displayAppointmentSlot(admin.ModelAdmin):
+  list_display= ['doctor', 'day_of_week', 'session', 'max_bookings']
+
 admin.site.register(Department)
 admin.site.register(Doctor, doctorDisplay)
+admin.site.register(AppointmentSlot, displayAppointmentSlot)

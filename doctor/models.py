@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 class Department(models.Model):
@@ -26,15 +27,26 @@ class Doctor(models.Model):
   def __str__(self):
     return self.user.first_name
   
-
 class AppointmentSlot(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
-    day_of_week = models.CharField(max_length=10, choices=[
-         ('MONDAY', 'Monday'), ('TUESDAY', 'Tuesday'), ('WEDNESDAY', 'Wednesday'),
-         ('THURSDAY', 'Thursday'), ('FRIDAY', 'Friday'), ('SATURDAY', 'Saturday'), ('SUNDAY', 'Sunday')
-    ])
-    slot= models.CharField(max_length=10, choices=[('MORNING','Morning'), ('AFTERNOON', 'Afternoon'), ('EVENING',"Evening")])
+    day_of_week = models.CharField(
+        max_length=10, 
+        choices=[
+            ('MONDAY', 'Monday'), ('TUESDAY', 'Tuesday'), ('WEDNESDAY', 'Wednesday'),
+            ('THURSDAY', 'Thursday'), ('FRIDAY', 'Friday'), ('SATURDAY', 'Saturday'), ('SUNDAY', 'Sunday')
+        ]
+    )
+    session = models.CharField(
+        max_length=10, 
+        choices=[
+            ('MORNING', 'Morning'), ('AFTERNOON', 'Afternoon'), ('EVENING', 'Evening')
+        ]
+    )
     max_bookings = models.PositiveIntegerField(default=10)
 
+    class Meta:
+        unique_together = ('doctor', 'day_of_week', 'session')
+        ordering = ['doctor', 'day_of_week', 'session']
+
     def __str__(self):
-        return f"{self.doctor.user} - {self.day_of_week} {self.slot}"
+        return f"{self.doctor.user} - {self.day_of_week} {self.session}"

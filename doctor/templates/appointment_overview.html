@@ -3,7 +3,7 @@
 
 <!-- Header -->
 <header class="py-3 mb-4 border-bottom shadow">
-    <div class="container-fluid align-items-center d-flex justify-content-between">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
         <a href="#" class="d-flex align-items-center col-lg-4 mb-2 mb-lg-0 link-dark text-decoration-none">
             <i class="bi bi-bootstrap fs-3 text-primary me-2"></i>
             <span class="fs-4 fw-bold text-dark">Welcome {{ doctor.user.first_name }}</span>
@@ -12,15 +12,21 @@
 </header>
 
 <!-- Container -->
-<div class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto" style="height: calc(100vh - 56px);"> <!-- Adjusted height to fit the header -->
+<div class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto" style="height: calc(100vh - 56px);"> <!-- Adjust this value as needed -->
     <div class="row flex-grow-1 flex-grow-0">
         <!-- Sidebar -->
-        <aside class="col-sm-3 flex-shrink-0 bg-light border rounded-3 p-3 h-100 sticky-top">
+        <nav class="col-sm-3 flex-shrink-0 bg-light border rounded-3 p-3 h-100 sticky-top">
             <ul class="nav nav-pills flex-sm-column flex-row mb-auto text-truncate">
                 <li class="nav-item mb-2">
                     <a href="{% url 'doctor-profile' doctor.id %}" class="nav-link d-flex align-items-center px-3 text-dark">
                         <i class="bi bi-house fs-5 me-2"></i>
                         <span class="d-none d-sm-inline">Profile</span>
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="{% url 'dashboard'  %}" class="nav-link d-flex align-items-center px-3 text-dark">
+                        <i class="bi bi-card-text fs-5 me-2"></i>
+                        <span class="d-none d-sm-inline">Dashboard</span>
                     </a>
                 </li>
                 <li class="nav-item mb-2">
@@ -36,12 +42,11 @@
                     </a>
                 </li>
             </ul>
-        </aside>
+        </nav>
 
         <!-- Main Content -->
         <main class="col overflow-auto h-100 px-4 py-3">
             <div class="bg-light border rounded-3 p-4">
-                <h2 class="mb-3">Today's Schedule</h2>
                 {% for appointment in appointments %}
                 <div class="col-auto mb-3">
                     <div class="card" style="width: 20.9rem;">
