@@ -47,22 +47,24 @@
         <!-- Main Content -->
         <main class="col overflow-auto h-100 px-4 py-3">
             <div class="bg-light border rounded-3 p-4">
-                {% for appointment in appointments %}
-                <div class="col-auto mb-3">
-                    <div class="card" style="width: 20.9rem;">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ appointment.patient.first_name }} {{ appointment.patient.last_name }}</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">{{ appointment.slot.date }}</h6>
-                            <h6 class="card-subtitle mb-2 text-muted">{{ appointment.slot.day_of_week }}</h6>
-                            
-                            <a type="button" class="btn btn-primary" href="{% url 'doctor-profile' appointment.slot.doctor.id %}" data-mdb-ripple-init>View Profile</a>
-                            <a type="button" class="btn btn-outline-info" data-mdb-ripple-init data-mdb-ripple-color="dark">Book An Appointment</a>
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    {% for appointment in appointments %}
+                    <div class="col mb-3">
+                        <div class="card h-100" style="width: 100%;">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ appointment.patient.first_name }} {{ appointment.patient.last_name }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">{{ appointment.date }}</h6>
+                                <h6 class="card-subtitle mb-2 text-muted">{{ appointment.slot.day_of_week }}</h6>
+            
+                                <a type="button" class="btn btn-primary mb-2" href="{% url 'doctor-profile' appointment.slot.doctor.id %}" data-mdb-ripple-init>View Profile</a>
+                                <a type="button" class="btn btn-outline-info mb-2" data-mdb-ripple-init data-mdb-ripple-color="dark">Book An Appointment</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-                {% empty %}
+                    {% empty %}
                     <p>No appointments found for this doctor.</p>
-                {% endfor %}
+                    {% endfor %}
+                </div>
             </div>
         </main>
     </div>

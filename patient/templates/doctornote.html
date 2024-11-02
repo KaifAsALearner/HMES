@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block start %}
+<div class="mx-0 mx-sm-auto container mt-5 col-md-6">
+  <div class="card">
+    <div class="card-header bg-primary">
+      <h5 class="card-title text-white mt-2" id="exampleModalLabel">Doctor's Note</h5>
+    </div>
+    <div class="modal-body">
+      <div class="text-center">
+        <i class="far fa-file-alt fa-4x mb-3 text-primary"></i>
+        <p>
+          <strong>Name: {{name}}</strong>
+        </p>
+        <p>
+          <strong>Doctor: Dr. {{doctor}}</strong>
+        </p>
+        <p>
+          <strong>Date: {{dateandtime}}</strong>
+        </p>
+      </div>
+
+      <hr />
+
+      <!-- <form class="px-4" action=""> -->
+        <!-- Message input -->
+        <div data-mdb-input-init class="form-outline mb-4 px-4">
+          <textarea class="form-control" id="form4Example3" rows="4" readonly>{{note}}</textarea>
+        </div>
+      <!-- </form> -->
+    </div>
+  </div>
+</div>
+{% endblock %}

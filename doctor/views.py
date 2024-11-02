@@ -29,6 +29,12 @@ def doctor(request):
 def doctor_dashboard(request,pk):
     doctor=Doctor.objects.get(id=pk)
     appointments = Appointment.objects.filter(slot__doctor=doctor, date=date.today()).order_by('date')
+    if request.method == "POST":
+        appointment_id = request.POST.get('appointment_id')
+        appointment = Appointment.objects.filter(id = appointment_id).first()
+        appointment.doctorsnote = request.POST.get('doctor_note')
+        appointment.save()
+        return redirect('doctor-dashboard',pk=doctor.id)
     context={'doctor':doctor,'appointments':appointments}
     return render(request,'doctor_dashboard.html',context)
 
@@ -54,3 +60,14 @@ def appointment_overview(request,pk):
     appointments = Appointment.objects.filter(slot__doctor=doctor).order_by('date')
     context={'appointments':appointments,'doctor':doctor}
     return render(request,'appointment_overview.html',context)
+
+def doctor_note(request,pk):
+    appointment = Appointment.objects.get(id=int(pk))
+    form = NoteForm(instance=appointment)
+    if request.method == "POST":
+        form = NoteForm(request.POST,instance=appointment)
+        if form.is_valid():
+            form.save()
+            return redirect('doctor-dashboard',pk=appointment.slot.doctor.id)
+    context={'form':form}
+    return render(request,'doctor_note.html',context)

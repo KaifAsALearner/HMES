@@ -7,7 +7,7 @@ class doctorDisplay(admin.ModelAdmin):
   list_display= ['user', 'dob', 'sex']
 
 class displayAppointmentSlot(admin.ModelAdmin):
-  list_display= ['doctor', 'day_of_week', 'session', 'max_bookings']
+  list_display= ['id', 'doctor', 'day_of_week', 'session', 'max_bookings']
 
 admin.site.register(Department)
 admin.site.register(Doctor, doctorDisplay)

@@ -1,4 +1,28 @@
 {% extends "base.html" %}
+{% block cssstyles %}
+
+<style>
+  .time-slot {
+      cursor: pointer;
+      border: 1px solid #007bff;
+      border-radius: 5px;
+      padding: 10px;
+      margin: 5px;
+      text-align: center;
+      transition: background-color 0.3s, color 0.3s;
+  }
+  .time-slot.selected {
+      background-color: #007bff;
+      color: white;
+  }
+  .time-slot.disabled {
+      background-color: #b0c4de; /* Light Steel Blue */
+      color: #6c757d;
+      cursor: not-allowed;
+  }
+</style>
+
+{% endblock %}
 
 {% block start%}
 <div class="container mt-5">
@@ -13,7 +37,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
               </div>
             {% endfor %}
-            <form method="post" action="{% url 'book_appointment' doctor_id %}">
+            <form method="post" action="{% url 'book_appointment' doctor_id=doctor_id %}">
               {% csrf_token %}
                 <div class="row g-3">
                     
@@ -26,8 +50,9 @@
 
                     <div class="col-12">
                       <!-- Select-style input for dropdown -->
+                      <label for="selectDropdown-member" class="mx-1">Member</label>
                       <input type="text" class="form-control dropdown-toggle" id="selectDropdown-member" name="member" placeholder="Select a Member" data-bs-toggle="dropdown" aria-expanded="false" readonly>
-                      <input name="patient_id" value="" hidden/>
+                      <input name="patient_id" value="" id="patientId" hidden/>
                       <!-- Dropdown menu structure -->
                       <ul class="dropdown-menu dm-member" aria-labelledby="selectDropdown-member" id="dropdown-menu-member">
                           <li class="px-3 py-2">
@@ -49,17 +74,29 @@
                     
   
                     <div class="col-md-12">
-                      {% for key,values in slots.items %}
-                      <h6>{{key}}</h6>
-                      {% for value in values %}
-                      <p>{{value}}</p>
-                      {% endfor %}
-                      {% endfor %}
+                        <h5 class="my-2">Select Appointment Slot</h5>
                     </div>
+                        <input name="slot_id" value="" id="slotId" hidden/>
+                            <!-- Iterate over the sorted data -->
+                            {% for day, slots in sorted_data.items %}
+                                <div class="col-md-12">
+                                    <h6>{{ day }}</h6>
+                                </div>
+                                    <!-- <div class="d-flex flex-row"> -->
+                                        <!-- Iterate over the time slots for each day -->
+                                        {% for slot, details in slots.items %}
+                                            <div class="time-slot col-md-3 {% if not details.available %}disabled{% endif %}" 
+                                            onclick="selectSlot(this, '{{ day }}', '{{ slot }}',  '{{ details.id }}', '{{ details.available }}')">
+                                                {{ slot }}
+                                            </div>
+                                        {% endfor %}
+                                    <!-- </div> -->
+                            {% endfor %}
+                        
                     <div class="col-12 mt-5">                        
                       <button type="submit" class="btn btn-primary float-end">Book Appointment</button>
                       <a class="btn btn-outline-secondary float-end me-2" href="{% url 'home' %}">Cancel</a>
-                  </div>
+                    </div>
                 </div>
             </form>
         </div>
@@ -90,19 +127,6 @@
         });
     });
   
-    document.getElementById('searchInput-doctor').addEventListener('input', function() {
-        const filter = this.value.toLowerCase();
-        const items = document.querySelectorAll('#dropdown-menu-doctor .di-doctor');
-  
-        items.forEach(item => {
-            if (item.textContent.toLowerCase().includes(filter)) {
-                item.style.display = '';
-            } else {
-                item.style.display = 'none';
-            }
-        });
-    });
-  
     // JavaScript to handle selecting an option
     function selectOption(value,role,member_id) {
         document.getElementById('selectDropdown-'+role).value = value;
@@ -112,4 +136,23 @@
         bsDropdown.hide(); // Hide the dropdown after selecting
     }
   </script>
+
+<script>
+  function selectSlot(element, day, slot, slotid, isAvailable) {
+      // If the slot is not available, do nothing
+
+      if (!isAvailable) {
+          return;
+      }
+      // Remove the 'selected' class from all slots
+      const allSlots = document.querySelectorAll('.time-slot');
+      allSlots.forEach(slot => slot.classList.remove('selected'));
+
+      // Add the 'selected' class to the clicked slot
+      element.classList.add('selected');
+
+      // Optionally, you can also log the selected day and slot
+      document.getElementById('slotId').value=slotid;
+  }
+</script>
 {% endblock %}

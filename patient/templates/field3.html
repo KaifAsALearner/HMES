@@ -1,0 +1,63 @@
+{% extends "patientdashboard.html" %}
+{% block fieldinfo %}
+
+<section class="intro" style="background-color: #eee; border-radius: 10px;">
+  <div class="bg-image h-100 py-4 px-2">
+    <div class="mask d-flex align-items-start h-100">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-12">
+            <div class="card shadow-2-strong" style="background-color: #f5f7fa;">
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-borderless mb-0">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">NAME</th>
+                        <th scope="col">DOCTOR</th>
+                        <th scope="col">DATE AND TIME</th>
+                        <th scope="col">STATUS</th>
+                        <th scope="col">NOTE</th>
+                        <th scope="col">FEEDBACK</th>
+                        <th scope="col">Cancel</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      
+                      {% for appointment in appointments %}
+                        <tr>
+                          <th scope="row">{{forloop.counter}}</th>
+                          <td>{{appointment.patient.first_name}} {{appointment.patient.last_name}}</td>
+                          <td><a class="btn btn-outline-primary border-0 px-1 py-0 m-0" href="{% url 'doctor-profile' pk=appointment.slot.doctor.id %}">Dr. {{appointment.slot.doctor.user.first_name}} {{appointment.slot.doctor.user.last_name}}</a></td>
+                          <td>{{appointment.date}} | {{appointment.slot.session}}</td>
+                          <td class="{% if appointment.stat == 'CONFIRMED' %} text-success
+                                     {% elif appointment.stat == 'CANCELLED' %} text-danger
+                                     {% endif %}">{{appointment.stat}}</td>
+                          <td>
+                            <a href="{% url 'doctorsnote' apt_id=appointment.id %}" class="btn btn-outline-primary border-0 px-1 py-0 m-0">Show</a>
+                          </td>
+                          <td>
+                            <a href="" class="btn btn-outline-primary border-0 px-1 py-0 m-0">Show</a>
+                          </td>
+                          <td>
+                            <button type="button" class="btn btn-danger btn-sm px-3">
+                              <i class="fas fa-times"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      {% endfor %}
+
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

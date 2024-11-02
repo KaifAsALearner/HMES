@@ -4,17 +4,19 @@ from django.contrib import messages
 from account.models import *
 from .models import *
 from datetime import datetime,date
+from appointment.models import *
 
 # Create your views here.
 @login_required(login_url='/login/')
 def patient_db(request):
-  sidefields= ['User Profile', 'Patients', 'Appointments']
+  sidefields= ['User Profile', 'Members', 'Appointments']
   chosenfield= 1
   context= {
     'sidefields': sidefields,
     'chosenfield': 1,
     'userInfo': UserInfo.objects.filter(user= request.user)[0],
-    'patients': Patient.objects.filter(user= request.user).order_by('first_name','last_name')
+    'patients': Patient.objects.filter(user= request.user).order_by('first_name','last_name'),
+    'appointments': Appointment.objects.filter(patient__user= request.user).order_by('-date')
   }
   if not request.GET.get('fieldselected') == None:
     information=request.GET
@@ -55,3 +57,13 @@ def addapatient(request):
     return redirect('/dashboard/p/')
 
   return render(request, 'addapatient.html')
+
+def doctorsnote(request,apt_id):
+  appointment=Appointment.objects.filter(id=apt_id).first()
+  context={
+    'name': appointment.patient.first_name+' '+appointment.patient.last_name,
+    'doctor': appointment.slot.doctor.user.first_name+' '+appointment.slot.doctor.user.last_name,
+    'dateandtime': (appointment.date).strftime('%d %B %Y | %A'),
+    'note': appointment.doctorsnote
+  }
+  return render(request,'doctornote.html',context)
