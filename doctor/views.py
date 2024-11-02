@@ -9,6 +9,7 @@ from django.db.models import Q
 from .forms import *
 from django.utils import timezone
 from datetime import date
+from collections import OrderedDict
 
 # Create your views here.
 def doctor(request):
@@ -28,7 +29,7 @@ def doctor(request):
 
 def doctor_dashboard(request,pk):
     doctor=Doctor.objects.get(id=pk)
-    appointments = Appointment.objects.filter(slot__doctor=doctor, date=date.today()).order_by('date')
+    appointments = Appointment.objects.filter(slot__doctor=doctor, date=date.today(), stat= 'CONFIRMED').order_by('-date')
     if request.method == "POST":
         appointment_id = request.POST.get('appointment_id')
         appointment = Appointment.objects.filter(id = appointment_id).first()
@@ -38,9 +39,32 @@ def doctor_dashboard(request,pk):
     context={'doctor':doctor,'appointments':appointments}
     return render(request,'doctor_dashboard.html',context)
 
+def tuple_formatting(tuple_list):
+    result={}
+    for key,value in tuple_list:
+        if key not in result:
+            result[key]=[]
+        result[key].append(value)
+    
+    # Desired order of days and times
+    day_order = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']
+    time_order = {'MORNING': 1, 'AFTERNOON': 2, 'EVENING': 3}
+
+    # Arrange the dictionary according to the specified order
+    sorted_availability = OrderedDict(
+        (day, sorted(result[day], key=lambda time: time_order[time]))
+        for day in day_order if day in result
+    )
+
+    return sorted_availability
+
 def doctor_profile(request,pk):
     doctor=Doctor.objects.get(id=int(pk))
-    context={'doctor':doctor}
+
+    availability = AppointmentSlot.objects.filter(doctor=doctor).values_list('day_of_week', 'session')
+    availability = tuple_formatting(availability)
+    
+    context={'doctor':doctor, 'availability':availability}
     return render(request,'doctor_profile.html',context)
 
 def doctor_update(request,pk):
@@ -57,7 +81,7 @@ def doctor_update(request,pk):
 
 def appointment_overview(request,pk):
     doctor=Doctor.objects.get(id=pk)
-    appointments = Appointment.objects.filter(slot__doctor=doctor).order_by('date')
+    appointments = Appointment.objects.filter(slot__doctor=doctor, ).order_by('-date')
     context={'appointments':appointments,'doctor':doctor}
     return render(request,'appointment_overview.html',context)
 
@@ -71,3 +95,9 @@ def doctor_note(request,pk):
             return redirect('doctor-dashboard',pk=appointment.slot.doctor.id)
     context={'form':form}
     return render(request,'doctor_note.html',context)
+
+def doctor_feedback(request,pk):
+    doctor = Doctor.objects.filter(id=pk).first()
+    appointments = Appointment.objects.filter(slot__doctor = doctor )
+    context={'appointments':appointments,'doctor':doctor}
+    return render(request,'feedback_page.html',context)

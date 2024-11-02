@@ -34,17 +34,32 @@
                           <td class="{% if appointment.stat == 'CONFIRMED' %} text-success
                                      {% elif appointment.stat == 'CANCELLED' %} text-danger
                                      {% endif %}">{{appointment.stat}}</td>
+                          
+                          {% if appointment.stat == 'COMPLETED' %}
                           <td>
                             <a href="{% url 'doctorsnote' apt_id=appointment.id %}" class="btn btn-outline-primary border-0 px-1 py-0 m-0">Show</a>
                           </td>
                           <td>
-                            <a href="" class="btn btn-outline-primary border-0 px-1 py-0 m-0">Show</a>
+                            <a href="{% url 'update-feedback' pk=appointment.id %}" class="btn btn-outline-primary border-0 px-1 py-0 m-0">Show</a>
                           </td>
+                          {% else %}
+                          <td>NA</td>
+                          <td>NA</td>
+                          {% endif %}
+
+                          {% if appointment.stat == 'CONFIRMED' %}
                           <td>
-                            <button type="button" class="btn btn-danger btn-sm px-3">
-                              <i class="fas fa-times"></i>
+                            <a href="{% url 'canapt' apt_id=appointment.id %}" class="btn btn-danger btn-sm px-3 rounded">
+                              X
                             </button>
                           </td>
+                          {% else %}
+                          <td>
+                            <a class="btn btn-secondary btn-sm px-3 rounded">
+                              X
+                            </button>
+                          </td>
+                          {% endif %}
                         </tr>
                       {% endfor %}
 

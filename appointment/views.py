@@ -6,6 +6,7 @@ from collections import OrderedDict, defaultdict
 from datetime import datetime, date,timedelta
 from django.contrib import messages
 from account.models import *
+from .forms import *
 # Create your views here.
 
 def order_availability(data):
@@ -107,3 +108,37 @@ def book_appointment(request, doctor_id):
         return redirect('home')
     
     return render(request, 'book_appointment.html', context)
+
+def update_feedback(request,pk):
+    appointment = Appointment.objects.filter(id=pk).first()
+    form =FeedbackForm(instance=appointment)
+    if request.method =="POST":
+        form = FeedbackForm(request.POST,instance=appointment)
+        if form.is_valid():
+            form.save()
+            patient = appointment.patient
+            return redirect('patient_db')
+
+
+    context={'form':form}
+    return render(request,'update_feedback.html',context)
+
+def cancelappointment(request, apt_id):
+    appointment=Appointment.objects.filter(id=apt_id).first()
+    appointment.stat='CANCELLED'
+    appointment.save()
+
+    role=UserInfo.objects.filter(user=request.user).first().role_def
+
+    if role == 'DOCTOR':
+        pk=Doctor.objects.filter(user=request.user).first().id
+        return redirect('doctor-dashboard',pk=pk)
+    
+    return redirect('patient_db')
+
+def completeappointment(request, apt_id):
+    appointment=Appointment.objects.filter(id=apt_id).first()
+    appointment.stat='COMPLETED'
+    appointment.save()
+    pk=appointment.slot.doctor.id
+    return redirect('doctor-dashboard',pk=pk)

@@ -30,7 +30,7 @@
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a href="#" class="nav-link d-flex align-items-center px-3 text-dark">
+                    <a href="{% url 'doctor-feedback' doctor.id%}" class="nav-link d-flex align-items-center px-3 text-dark">
                         <i class="bi bi-bricks fs-5 me-2"></i>
                         <span class="d-none d-sm-inline">Feedback</span>
                     </a>
@@ -42,32 +42,48 @@
         <main class="col overflow-auto h-100 px-4 py-3">
             <div class="bg-light border rounded-3 p-4">
                 <h2 class="mb-3">Today's Schedule</h2>
-                {% for appointment in appointments %}
-                <div class="col-auto mb-3">
-                    <div class="card" style="width: 20.9rem;">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ appointment.patient.first_name }} {{ appointment.patient.last_name }}</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">{{ appointment.slot.day_of_week }}</h6>
-                            {% if appointment.doctorsnote == '' %}
-                            <form action="" method="POST">
-                                {% csrf_token %}
-                                <input type="text" name="doctor_note" placeholder="Write a note ...." class="form-control mb-2">
-                                <input type="hidden" name="appointment_id" value="{{ appointment.id }}">
-                            </form>
-                            {% else %}
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span>{{ appointment.doctorsnote }}</span>
-                                <a href="{% url 'doctor-note' appointment.id %}" class="btn btn-primary ms-3">
-                                    Edit
-                                </a>
+                    <div class="row row-cols-1 row-cols-md-3 g-4">
+                    {% for appointment in appointments %}
+                    <div class="col mb-3">
+                        <div class="card h-100" style="width: 20.9rem;">
+                            <div class="card-body">
+                                <h4 class="card-title">{{ appointment.patient.first_name }} {{ appointment.patient.last_name }}</h4>
+                                <h6 class="card-subtitle mb-2 text-muted">{{ appointment.slot.session }}</h6>
+
+                                <div class="col-md-12">
+                                    <a href="{% url 'comapt' apt_id=appointment.id %}" class="btn btn-success text-white px-4 me-1">&#10003;</a>
+                                    <a href="{% url 'canapt' apt_id=appointment.id %}" class="btn btn-danger text-white px-4">X</a>
+                                </div>
+
+                                <hr>
+                                <h5>Note</h5>
+                                {% if appointment.doctorsnote == '' %}
+                                <form action="" method="POST">
+                                    {% csrf_token %}
+                                    <input type="text" name="doctor_note" placeholder="Write a note ...." class="form-control mb-2">
+                                    <input type="hidden" name="appointment_id" value="{{ appointment.id }}">
+                                </form>
+                                {% else %}
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span>{{ appointment.doctorsnote }}</span>
+                                    <a href="{% url 'doctor-note' appointment.id %}" class="btn btn-primary ms-3">
+                                        Edit
+                                    </a>
+                                </div>
+                                {% endif %}
+                                <hr>
+                                <h5>Tests Recommended</h5>
+                                <ul>
+                                    <li>ab</li>
+                                    <li>cd</li>
+                                </ul>
                             </div>
-                            {% endif %}
                         </div>
                     </div>
+                    {% empty %}
+                        <p>No appointments found for you.</p>
+                    {% endfor %}
                 </div>
-                {% empty %}
-                    <p>No appointments found for this doctor.</p>
-                {% endfor %}
             </div>
         </main>
     </div>
