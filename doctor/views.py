@@ -11,6 +11,7 @@ from collections import OrderedDict
 from hospital_test.models import *
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from hmes.decorator import *
 
 # Create your views here.
 def doctor(request):
@@ -28,6 +29,7 @@ def doctor(request):
     return render(request,'doctor_page.html',context)
 
 @login_required(login_url='login_page')
+@role_required(['DOCTOR'])
 def doctor_dashboard(request,pk):
     doctor=Doctor.objects.get(id=pk)
     appointments = Appointment.objects.filter(slot__doctor=doctor, date=date.today(), stat= 'CONFIRMED').order_by('-date')
@@ -82,6 +84,7 @@ def doctor_profile(request,pk):
     return render(request,'doctor_profile.html',context)
 
 @login_required(login_url='login_page')
+@role_required(['DOCTOR'])
 def doctor_update(request,pk):
     doctor=Doctor.objects.get(id=int(pk))
     form = DoctorForm(instance=doctor)
@@ -95,6 +98,7 @@ def doctor_update(request,pk):
     return render(request,'doctor_update.html',context)
 
 @login_required(login_url='login_page')
+@role_required(['DOCTOR'])
 def appointment_overview(request,pk):
     q=request.GET.get('q') if (request.GET.get('q')!=None) else ''
     doctor=Doctor.objects.get(id=pk)
@@ -108,6 +112,7 @@ def appointment_overview(request,pk):
     return render(request,'appointment_overview.html',context)
 
 @login_required(login_url='login_page')
+@role_required(['DOCTOR'])
 def doctor_note(request,pk):
     appointment = Appointment.objects.get(id=int(pk))
     form = NoteForm(instance=appointment)
@@ -120,13 +125,15 @@ def doctor_note(request,pk):
     return render(request,'doctor_note.html',context)
 
 @login_required(login_url='login_page')
+@role_required(['DOCTOR','STAFF'])
 def doctor_feedback(request,pk):
     doctor = Doctor.objects.filter(id=pk).first()
-    appointments = Appointment.objects.filter(slot__doctor = doctor )
+    appointments = Appointment.objects.filter(slot__doctor = doctor ).exclude(feedback = None)
     context={'appointments':appointments,'doctor':doctor}
     return render(request,'feedback_page.html',context)
 
 @login_required(login_url='login_page')
+@role_required(['DOCTOR'])
 def confirmation(request,pk):
     appointment = Appointment.objects.get(id=int(pk))
     doctor = appointment.slot.doctor

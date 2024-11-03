@@ -1,14 +1,16 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import *
+from hmes.decorator import *
 
 
 # Create your views here.
 #login_page
+@redirect_authenticated_user
 def login_page(request):
 
   if request.method == "POST":
@@ -39,12 +41,12 @@ def login_page(request):
   return render(request,'loginpage.html')
 
 #logout_page
-@login_required(login_url='login_page')
 def logout_page(request):
   logout(request)
   return redirect('/')
 
 #register_page
+@redirect_authenticated_user
 def register_page(request):
 
   if request.method == "POST":
@@ -83,6 +85,10 @@ def register_page(request):
       mobile_number= phone_number,
     )
     userinfo.save()
+
+    group = Group.objects.get(name='PATIENT')
+    user.groups.add(group)
+
     login(request, authenticate(username= user_name, password= password))
     messages.success(request, "Account created successfully")
     return redirect('/')

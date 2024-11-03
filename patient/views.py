@@ -1,15 +1,20 @@
 from django.shortcuts import render,redirect
+from django.http import HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from account.models import *
 from .models import *
 from datetime import datetime,date
 from appointment.models import *
+from hmes.decorator import *
 
 # Create your views here.
-@login_required(login_url='/login/')
+@login_required(login_url='login_page')
+@role_required(['PATIENT'])
 def patient_db(request,chosenfield):
+
   sidefields= ['User Profile', 'Members', 'Appointments']
+
   context= {
     'sidefields': sidefields,
     'chosenfield': chosenfield,
@@ -28,6 +33,7 @@ def patient_db(request,chosenfield):
   return render(request, templte, context)
 
 @login_required(login_url='login_page')
+@role_required(['PATIENT'])
 def addapatient(request):
 
   if request.method== 'POST':
@@ -58,6 +64,7 @@ def addapatient(request):
   return render(request, 'addapatient.html')
 
 @login_required(login_url='login_page')
+@role_required(['PATIENT','STAFF'])
 def doctorsnote(request,apt_id):
   appointment=Appointment.objects.filter(id=apt_id).first()
   context={

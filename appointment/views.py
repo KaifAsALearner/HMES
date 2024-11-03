@@ -8,6 +8,8 @@ from datetime import datetime, date,timedelta
 from django.contrib import messages
 from account.models import *
 from .forms import *
+from hmes.decorator import *
+
 # Create your views here.
 
 def order_availability(data):
@@ -62,6 +64,7 @@ def finddate(day):
     return required_date
     
 @login_required(login_url='login_page')
+@role_required(['PATIENT'])
 def book_appointment(request, doctor_id):
     # Get all doctors for the initial selection
     doctor= Doctor.objects.filter(id= doctor_id).first()
@@ -107,6 +110,7 @@ def book_appointment(request, doctor_id):
     return render(request, 'book_appointment.html', context)
 
 @login_required(login_url='login_page')
+@role_required(['PATIENT'])
 def update_feedback(request,pk):
     appointment = Appointment.objects.filter(id=pk).first()
     form =FeedbackForm(instance=appointment)
@@ -136,6 +140,7 @@ def cancelappointment(request, apt_id):
     return redirect('patient_db',3)
 
 @login_required(login_url='login_page')
+@role_required(['DOCTOR'])
 def completeappointment(request, apt_id):
     appointment=Appointment.objects.filter(id=apt_id).first()
     appointment.stat='COMPLETED'

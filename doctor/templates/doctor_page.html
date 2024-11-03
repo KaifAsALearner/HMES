@@ -54,7 +54,9 @@
                                     {% endfor %}
                                 </p>
                                 <a type="button" class="btn btn-primary" href="{% url 'doctor-profile' doctor.id %}" data-mdb-ripple-init>View Profile</a>
-                                <a type="button" class="btn btn-outline-info" href="{% url 'book_appointment' doctor.id %}" data-mdb-ripple-init data-mdb-ripple-color="dark">Book An Appointment</a>
+                                {% if request.user.userinfo.role_def == 'PATIENT' %}
+                                    <a type="button" class="btn btn-outline-info" href="{% url 'book_appointment' doctor.id %}" data-mdb-ripple-init data-mdb-ripple-color="dark">Book An Appointment</a>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
