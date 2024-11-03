@@ -4,7 +4,7 @@ from doctor.models import *
 
 # Register your models here.
 class doctorDisplay(admin.ModelAdmin):
-  list_display= ['user', 'dob', 'sex']
+  list_display= ['id','user', 'dob', 'sex']
 
 class displayAppointmentSlot(admin.ModelAdmin):
   list_display= ['id', 'doctor', 'day_of_week', 'session', 'max_bookings']

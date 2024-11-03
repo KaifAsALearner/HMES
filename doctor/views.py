@@ -2,16 +2,15 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.shortcuts import render,redirect
-from django.http import HttpResponse
 from doctor.models import *
 from appointment.models import *
 from django.db.models import Q
 from .forms import *
-from django.utils import timezone
 from datetime import date
 from collections import OrderedDict
 from hospital_test.models import *
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def doctor(request):
@@ -28,7 +27,7 @@ def doctor(request):
         context['field']=int(request.GET.get('i'))
     return render(request,'doctor_page.html',context)
 
-
+@login_required(login_url='login_page')
 def doctor_dashboard(request,pk):
     doctor=Doctor.objects.get(id=pk)
     appointments = Appointment.objects.filter(slot__doctor=doctor, date=date.today(), stat= 'CONFIRMED').order_by('-date')
@@ -82,6 +81,7 @@ def doctor_profile(request,pk):
     context={'doctor':doctor, 'availability':availability}
     return render(request,'doctor_profile.html',context)
 
+@login_required(login_url='login_page')
 def doctor_update(request,pk):
     doctor=Doctor.objects.get(id=int(pk))
     form = DoctorForm(instance=doctor)
@@ -94,6 +94,7 @@ def doctor_update(request,pk):
     context={'form':form}
     return render(request,'doctor_update.html',context)
 
+@login_required(login_url='login_page')
 def appointment_overview(request,pk):
     q=request.GET.get('q') if (request.GET.get('q')!=None) else ''
     doctor=Doctor.objects.get(id=pk)
@@ -106,6 +107,7 @@ def appointment_overview(request,pk):
     context={'appointments':appointments,'doctor':doctor,'test':tests,'appointment_cancelled':appointment_cancelled,'appointment_confirmed':appointment_confirmed,'appointment_completed':appointment_completed,'appointment_total':appointment_total}
     return render(request,'appointment_overview.html',context)
 
+@login_required(login_url='login_page')
 def doctor_note(request,pk):
     appointment = Appointment.objects.get(id=int(pk))
     form = NoteForm(instance=appointment)
@@ -117,11 +119,14 @@ def doctor_note(request,pk):
     context={'form':form}
     return render(request,'doctor_note.html',context)
 
+@login_required(login_url='login_page')
 def doctor_feedback(request,pk):
     doctor = Doctor.objects.filter(id=pk).first()
     appointments = Appointment.objects.filter(slot__doctor = doctor )
     context={'appointments':appointments,'doctor':doctor}
     return render(request,'feedback_page.html',context)
+
+@login_required(login_url='login_page')
 def confirmation(request,pk):
     appointment = Appointment.objects.get(id=int(pk))
     doctor = appointment.slot.doctor

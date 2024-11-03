@@ -3,7 +3,7 @@ from doctor.models import Doctor, AppointmentSlot
 from django.contrib.auth.decorators import login_required
 from patient.models import *
 from .models import *
-from collections import OrderedDict, defaultdict
+from collections import OrderedDict
 from datetime import datetime, date,timedelta
 from django.contrib import messages
 from account.models import *
@@ -61,7 +61,7 @@ def finddate(day):
     required_date= date_today+timedelta(days=delta)
     return required_date
     
-@login_required(login_url='/login/')
+@login_required(login_url='login_page')
 def book_appointment(request, doctor_id):
     # Get all doctors for the initial selection
     doctor= Doctor.objects.filter(id= doctor_id).first()
@@ -106,6 +106,7 @@ def book_appointment(request, doctor_id):
     
     return render(request, 'book_appointment.html', context)
 
+@login_required(login_url='login_page')
 def update_feedback(request,pk):
     appointment = Appointment.objects.filter(id=pk).first()
     form =FeedbackForm(instance=appointment)
@@ -119,6 +120,7 @@ def update_feedback(request,pk):
     context={'form':form}
     return render(request,'update_feedback.html',context)
 
+@login_required(login_url='login_page')
 def cancelappointment(request, apt_id):
     appointment=Appointment.objects.filter(id=apt_id).first()
     appointment.stat='CANCELLED'
@@ -133,6 +135,7 @@ def cancelappointment(request, apt_id):
 
     return redirect('patient_db',3)
 
+@login_required(login_url='login_page')
 def completeappointment(request, apt_id):
     appointment=Appointment.objects.filter(id=apt_id).first()
     appointment.stat='COMPLETED'
@@ -140,6 +143,7 @@ def completeappointment(request, apt_id):
     pk=appointment.slot.doctor.id
     return redirect('doctor-dashboard',pk=pk)
 
+@login_required(login_url='login_page')
 def readfeedback(request,apt_id):
   appointment=Appointment.objects.filter(id=apt_id).first()
   context={

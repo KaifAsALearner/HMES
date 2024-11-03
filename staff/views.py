@@ -8,6 +8,7 @@ from datetime import date
 from hospital_test.models import *
 from .forms import *
 
+@login_required(login_url='login_page')
 def doctor_availability(request, doctor_id):
     doctor = get_object_or_404(Doctor, id=doctor_id)
     days = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']
@@ -64,7 +65,7 @@ def builddoctors(doctorstuple):
     return doctors
 
 
-@login_required(login_url='/login/')
+@login_required(login_url='login_page')
 def staff_db(request,chosenfield):
     sidefields= ['User Profile', 'Doctors', 'Appointments','Tests']
     doctors= Doctor.objects.all().values_list('id','user__first_name','user__last_name')
@@ -97,6 +98,7 @@ def staff_db(request,chosenfield):
     templte="staff"+chr(chosenfield + 48)+".html"
     return render(request, templte, context)
 
+@login_required(login_url='login_page')
 def update_test(request,test_id):
     test=Test.objects.filter(id=test_id).first()
     form=TestForm(instance=test)
@@ -110,7 +112,7 @@ def update_test(request,test_id):
     context={'form':form}
     return render(request,'update_test.html',context)
 
-@login_required(login_url='/login/')
+@login_required(login_url='login_page')
 def addatest(request):
 
   if request.method== 'POST':

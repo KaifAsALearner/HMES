@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Build paths inside the project like this: BASE_DIR / 'subdir'. 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -37,6 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    #django_plugins
+    'guardian',
+    'crispy_forms',
+    'crispy_bootstrap4'
 ]
 
 EXTERNAL_APPS = [
@@ -151,3 +155,12 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert-warning',
     messages.ERROR: 'alert-danger',
 }
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',  # Django's default auth backend
+    'guardian.backends.ObjectPermissionBackend',   # Django Guardian backend
+)
+
+ANONYMOUS_USER_ID = -1
+
+CRISPY_TEMPLATE_PACK = 'Bootstrap4'

@@ -27,7 +27,7 @@ def patient_db(request,chosenfield):
   templte="field"+chr(chosenfield + 48)+".html"
   return render(request, templte, context)
 
-@login_required(login_url='/login/')
+@login_required(login_url='login_page')
 def addapatient(request):
 
   if request.method== 'POST':
@@ -57,6 +57,7 @@ def addapatient(request):
 
   return render(request, 'addapatient.html')
 
+@login_required(login_url='login_page')
 def doctorsnote(request,apt_id):
   appointment=Appointment.objects.filter(id=apt_id).first()
   context={
