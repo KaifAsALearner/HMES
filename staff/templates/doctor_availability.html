@@ -31,7 +31,8 @@
                 {% endfor %}
             </tbody>
         </table>
-        <button type="submit" class="btn btn-primary">Update Availability</button>
+        <a href="{% url 'staff_db' chosenfield=2 %}" class="btn btn-primary">Return</a>
+        <button type="submit" class="btn btn-danger">Update Availability</button>
     </form>
 </div>
 

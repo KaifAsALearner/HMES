@@ -1,0 +1,57 @@
+{% extends "staffdashboard.html" %}
+{% block cssstyles %}
+<style>
+  /* Custom styles for active link highlighting */
+  .sidebar .nav-link.active {
+      background-color: #007bff;
+      color: white;
+  }
+  .content-section {
+      display: none;
+  }
+  .content-section.active {
+      display: block;
+  }
+</style>
+{% endblock %}
+
+{% block fieldinfo %}
+<a href="{% url 'addatest' %}" class="btn btn-primary position-fixed" style="bottom: 20px; right: 20px;">Click To Add A Test</a>
+<div class="container-fluid">
+
+        <!-- Main Content Section -->
+        <main role="main" class="ml-sm-auto px-md-4 pt-3">
+            <h3>Tests</h3>
+            <div class="container mt-4">
+                <div class="row">
+                    {% for test in tests %}
+                    <div class="col-auto mb-3 mx-3">
+                        <div class="card row" style="width: 20.9rem;">
+                            <div class="card-body">
+                              <div class="row g-1">
+                              <div class="col-md-8">
+                                <h5 class="card-title">{{test.name}}</h5>
+                              </div>
+                              <div class="col-md-4">
+                                <a type="button" class="btn btn-primary m-0 p-1 px-3" href="{% url 'update_test' test_id=test.id %}" data-mdb-ripple-init>Edit</a>
+                              </div>
+                              </div>
+
+                              <hr class="mt-2">
+
+                              <p>{{test.descript}}</p>
+
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </main>
+
+  </div>
+
+
+
+
+{% endblock %}

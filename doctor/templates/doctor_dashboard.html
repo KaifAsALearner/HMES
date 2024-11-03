@@ -6,7 +6,7 @@
     <div class="container-fluid align-items-center d-flex justify-content-between">
         <a href="#" class="d-flex align-items-center col-lg-4 mb-2 mb-lg-0 link-dark text-decoration-none">
             <i class="bi bi-bootstrap fs-3 text-primary me-2"></i>
-            <span class="fs-4 fw-bold text-dark">Welcome {{ doctor.user.first_name }}</span>
+            <span class="fs-4 fw-bold text-dark">Welcome Dr {{ doctor.user.first_name }}</span>
         </a>
     </div>
 </header>
@@ -30,7 +30,7 @@
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a href="{% url 'doctor-feedback' doctor.id%}" class="nav-link d-flex align-items-center px-3 text-dark">
+                    <a href="{% url 'doctor-feedback' doctor.id %}" class="nav-link d-flex align-items-center px-3 text-dark">
                         <i class="bi bi-bricks fs-5 me-2"></i>
                         <span class="d-none d-sm-inline">Feedback</span>
                     </a>
@@ -42,7 +42,7 @@
         <main class="col overflow-auto h-100 px-4 py-3">
             <div class="bg-light border rounded-3 p-4">
                 <h2 class="mb-3">Today's Schedule</h2>
-                    <div class="row row-cols-1 row-cols-md-3 g-4">
+                <div class="row row-cols-1 row-cols-md-3 g-4">
                     {% for appointment in appointments %}
                     <div class="col mb-3">
                         <div class="card h-100" style="width: 20.9rem;">
@@ -51,8 +51,8 @@
                                 <h6 class="card-subtitle mb-2 text-muted">{{ appointment.slot.session }}</h6>
 
                                 <div class="col-md-12">
-                                    <a href="{% url 'comapt' apt_id=appointment.id %}" class="btn btn-success text-white px-4 me-1">&#10003;</a>
-                                    <a href="{% url 'canapt' apt_id=appointment.id %}" class="btn btn-danger text-white px-4">X</a>
+                                    <a href="{% url 'confirmation' appointment.id %}?q=Complete" class="btn btn-success text-white px-4 me-1">Complete</a>
+                                    <a href="{% url 'confirmation' appointment.id %}?q=Cancel" class="btn btn-danger text-white px-4">Cancel</a>
                                 </div>
 
                                 <hr>
@@ -62,6 +62,7 @@
                                     {% csrf_token %}
                                     <input type="text" name="doctor_note" placeholder="Write a note ...." class="form-control mb-2">
                                     <input type="hidden" name="appointment_id" value="{{ appointment.id }}">
+                                    <button type="submit" class="btn btn-primary">Save Note</button>
                                 </form>
                                 {% else %}
                                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -72,11 +73,33 @@
                                 </div>
                                 {% endif %}
                                 <hr>
+                                <h5>Add a Test</h5>
+                                <form method="POST" action="">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="appointment_id" value="{{ appointment.id }}">
+                                    <input type="text" name="test" list="test-list" class="form-control mb-2">
+                                    <datalist id="test-list">
+                                        {% for test in tests %}
+                                            <option value="{{ test.name }}">{{ test.name }}</option>
+                                        {% endfor %}
+                                    </datalist>
+                                    <button type="submit" class="btn btn-primary">Add Test</button>
+                                </form>
+                                {% for message in messages %}
+                                <div class="alert alert-dismissible {{ message.tags }} mt-1" role="alert">
+                                    <div>{{ message | safe }}</div>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                                {% endfor %}
+                                <hr>
                                 <h5>Tests Recommended</h5>
                                 <ul>
-                                    <li>ab</li>
-                                    <li>cd</li>
-                                </ul>
+                                    {% for test in appointment.test.all %}
+                                        <li>{{ test.name }}</li>
+                                    {% empty %}
+                                        <p>No tests assigned yet.</p>
+                                    {% endfor %}
+                                </ul>         
                             </div>
                         </div>
                     </div>

@@ -2,9 +2,7 @@
 {% block start %}
 <div class="mx-0 mx-sm-auto container mt-5 col-md-6">
   <div class="card">
-    <div class="card-header bg-primary">
-      <h5 class="card-title text-white mt-2" id="exampleModalLabel">Doctor's Note</h5>
-    </div>
+    
     <div class="modal-body">
       <div class="text-center">
         <i class="far fa-file-alt fa-4x mb-3 text-primary"></i>
@@ -19,7 +17,10 @@
         </p>
       </div>
 
-      <hr />
+
+      <div class="card-header bg-success mb-4">
+        <h5 class="card-title text-white mt-2" id="exampleModalLabel">Doctor's Note</h5>
+      </div>
 
       <!-- <form class="px-4" action=""> -->
         <!-- Message input -->
@@ -27,6 +28,18 @@
           <textarea class="form-control" id="form4Example3" rows="4" readonly>{{note}}</textarea>
         </div>
       <!-- </form> -->
+       
+      <div class="card-header bg-success mt-5">
+        <h5 class="card-title text-white mt-2" id="exampleModalLabel">Test(s) Recommended</h5>
+      </div>
+      
+      <ul class="list-group rounded-top-0">
+        {% for test in tests %}
+        <li class="list-group-item">{{test}}</li>
+        {% empty %}
+        <li class="list-group-item">No test recommended</li>
+        {% endfor %}
+      </ul>
     </div>
   </div>
 </div>

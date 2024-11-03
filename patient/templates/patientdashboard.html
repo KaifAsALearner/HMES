@@ -51,7 +51,7 @@ table th {
                 <ul class="nav flex-column">
                     {% for field in sidefields %}
                     <li class="nav-item">
-                        <a class="nav-link {% if forloop.counter == chosenfield %}active{% endif %}" href="{% url 'patient_db' %}?fieldselected={{forloop.counter}}">{{field}}</a>
+                        <a class="nav-link {% if forloop.counter == chosenfield %}active{% endif %}" href="{% url 'patient_db' forloop.counter %}">{{field}}</a>
                     </li>
                     {% endfor %}
                 </ul>

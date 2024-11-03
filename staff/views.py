@@ -1,7 +1,12 @@
 # views.py
 from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse
 from doctor.models import *
+from appointment.models import *
+from django.contrib.auth.decorators import login_required
+from account.models import *
+from datetime import date
+from hospital_test.models import *
+from .forms import *
 
 def doctor_availability(request, doctor_id):
     doctor = get_object_or_404(Doctor, id=doctor_id)
@@ -22,7 +27,7 @@ def doctor_availability(request, doctor_id):
                     AppointmentSlot.objects.create(doctor=doctor, day_of_week=day, session=session)
 
         # Redirect to the same page to refresh with updated data
-        return redirect(reverse('doctor_availability', args=[doctor_id]))
+        return redirect('staff_db',2)
 
     # Get all available appointment slots for the doctor
     available_slots = AppointmentSlot.objects.filter(doctor=doctor).values_list('day_of_week', 'session')
@@ -38,3 +43,86 @@ def doctor_availability(request, doctor_id):
     }
     
     return render(request, 'doctor_availability.html', context)
+
+
+def builddoctors(doctorstuple):
+    doctors=[]
+    today= date.today()
+    for id,fn,ln in doctorstuple:
+        single={}
+        single['id']=id
+        single['first_name']=fn
+        single['last_name']=ln
+        previous=Appointment.objects.filter(slot__doctor__id=id, date__lt= today, stat='COMPLETED').count()
+        upcoming=Appointment.objects.filter(slot__doctor__id=id, date__gt= today).exclude(stat='CANCELLED').count()
+        todays=Appointment.objects.filter(slot__doctor__id=id, date= today).exclude(stat='CANCELLED').count()
+        single['prev']=previous
+        single['upco']=upcoming
+        single['toda']=todays
+        doctors.append(single)
+    
+    return doctors
+
+
+@login_required(login_url='/login/')
+def staff_db(request,chosenfield):
+    sidefields= ['User Profile', 'Doctors', 'Appointments','Tests']
+    doctors= Doctor.objects.all().values_list('id','user__first_name','user__last_name')
+    doctors=builddoctors(doctors)
+    context= {
+    'sidefields': sidefields,
+    'chosenfield': chosenfield,
+    'userInfo': UserInfo.objects.filter(user= request.user)[0],
+    'doctors':doctors,
+    'appointments':Appointment.objects.all(),
+    'currentdoc':'All',
+    'tests': Test.objects.all(),
+    }
+    # if not request.GET.get('fieldselected') == None:
+    #   information=request.GET
+    #   chosenfield=int(information.get('fieldselected')[0])
+    #   context['chosenfield']= chosenfield
+    #   templte="field"+chr(chosenfield + 48)+".html"
+    #   return render(request, templte, context)
+    if request.GET and chosenfield == 3 :
+        information=request.GET
+        doctor_id=information.get('doctor_id')
+        if doctor_id == '':
+            context['currentdoc']='All'
+            context['appointments']=Appointment.objects.all()
+        else:
+            context['currentdoc']=information.get('doctor')
+            context['appointments']=Appointment.objects.filter(slot__doctor__id=doctor_id)
+
+    templte="staff"+chr(chosenfield + 48)+".html"
+    return render(request, templte, context)
+
+def update_test(request,test_id):
+    test=Test.objects.filter(id=test_id).first()
+    form=TestForm(instance=test)
+
+    if request.method =="POST":
+        form = TestForm(request.POST,instance=test)
+        if form.is_valid():
+            form.save()
+            return redirect('staff_db',4)
+    
+    context={'form':form}
+    return render(request,'update_test.html',context)
+
+@login_required(login_url='/login/')
+def addatest(request):
+
+  if request.method== 'POST':
+    information= request.POST
+    name= information.get('name')
+    descript= information.get('descript')
+
+    test=Test.objects.create(
+        name=name,
+        descript=descript,
+    )
+    test.save()
+    return redirect('staff_db',4)
+
+  return render(request, 'addatest.html')

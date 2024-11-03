@@ -6,13 +6,13 @@
     <div class="container-fluid d-flex justify-content-between align-items-center">
         <a href="#" class="d-flex align-items-center col-lg-4 mb-2 mb-lg-0 link-dark text-decoration-none">
             <i class="bi bi-bootstrap fs-3 text-primary me-2"></i>
-            <span class="fs-4 fw-bold text-dark">Welcome {{ doctor.user.first_name }}</span>
+            <span class="fs-4 fw-bold text-dark">Welcome Dr {{ doctor.user.first_name }}</span>
         </a>
     </div>
 </header>
 
 <!-- Container -->
-<div class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto" style="height: calc(100vh - 56px);"> <!-- Adjust this value as needed -->
+<div class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto" style="height: calc(100vh - 56px);">
     <div class="row flex-grow-1 flex-grow-0">
         <!-- Sidebar -->
         <nav class="col-sm-3 flex-shrink-0 bg-light border rounded-3 p-3 h-100 sticky-top">
@@ -36,7 +36,7 @@
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a href="{% url 'doctor-feedback' doctor.id%}" class="nav-link d-flex align-items-center px-3 text-dark">
+                    <a href="{% url 'doctor-feedback' doctor.id %}" class="nav-link d-flex align-items-center px-3 text-dark">
                         <i class="bi bi-bricks fs-5 me-2"></i>
                         <span class="d-none d-sm-inline">Feedback</span>
                     </a>
@@ -47,6 +47,45 @@
         <!-- Main Content -->
         <main class="col overflow-auto h-100 px-4 py-3">
             <div class="bg-light border rounded-3 p-4">
+                <!-- Statistics Section -->
+                <div class="mb-4">
+                    <h4>Appointment Statistics</h4>
+                    <div class="row">
+                        <div class="col">
+                            <div class="card text-white bg-success mb-3">
+                                <div class="card-body">
+                                    <a href="{% url 'appointment-overview' doctor.id %}" class="text-decoration-none text-white"><h5 class="card-title">All</h5></a>
+                                    <p class="card-text">{{appointment_total}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card text-white bg-success mb-3">
+                                <div class="card-body">
+                                    <a href="{% url 'appointment-overview' doctor.id %}?q=CONFIRMED" class="text-decoration-none text-white"><h5 class="card-title">Confirmed</h5></a>
+                                    <p class="card-text">{{appointment_confirmed}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card text-white bg-danger mb-3">
+                                <div class="card-body">
+                                    <a href="{% url 'appointment-overview'  doctor.id %}?q=CANCELLED" class="text-decoration-none text-white"><h5 class="card-title">Cancelled</h5></a>
+                                    <p class="card-text">{{appointment_cancelled}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card text-white bg-info mb-3">
+                                <div class="card-body">
+                                    <a href="{% url 'appointment-overview' doctor.id %}?q=COMPLETED" class="text-decoration-none text-white"><h5 class="card-title">Completed</h5></a>
+                                    <p class="card-text">{{appointment_completed}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row row-cols-1 row-cols-md-3 g-4">
                     {% for appointment in appointments %}
                     <div class="col mb-3">
@@ -66,9 +105,12 @@
                                 <hr>
                                 <h5>Tests Recommended</h5>
                                 <ul>
-                                    <li>ab</li>
-                                    <li>cd</li>
-                                </ul>
+                                    {% for test in appointment.test.all %}
+                                        <li>{{ test.name }}</li>
+                                    {% empty %}
+                                        <p>No tests assigned yet.</p>
+                                    {% endfor %}
+                                </ul>    
                             </div>
                         </div>
                     </div>

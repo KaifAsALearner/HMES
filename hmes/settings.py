@@ -45,7 +45,8 @@ EXTERNAL_APPS = [
   'patient',
   'doctor',
   'appointment',
-  'staff'
+  'staff',
+  'hospital_test',
 ]
 
 INSTALLED_APPS += EXTERNAL_APPS

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block start %}
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="card shadow-lg" style="max-width: 500px;">
+        <div class="card-body text-center">
+            {% if str == 'Complete' %}
+                <h3 class="card-title"> {{ str }} the appointment?</h3>
+                <div class="d-flex justify-content-center mt-4">
+                    <!-- Yes button -->
+                    <a href="{% url 'comapt' appointment.id %}" class="btn btn-success me-3 px-4">Yes</a>
+                    
+                    <!-- No button -->
+                    <a href="{% url 'doctor-dashboard' doctor.id %}" class="btn btn-secondary px-4">No</a>
+                </div>
+            {% else %}
+                <h3 class="card-title">{{ str }} the appointment?</h3>
+                <div class="d-flex justify-content-center mt-4">
+                    <!-- Yes button -->
+                    <a href="{% url 'canapt' appointment.id %}" class="btn btn-danger me-3 px-4">Yes</a>
+                    
+                    <!-- No button -->
+                    <a href="{% url 'doctor-dashboard' doctor.id %}" class="btn btn-secondary px-4">No</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends "staffdashboard.html" %}
+{% block fieldinfo %}
+
+
+
+
+<section style="background-color: #eee; border-radius: 10px;" class="min-vh-100 p-4">
+
+  <form id="selectDoctor" method="get" action="{% url 'staff_db' chosenfield=3 %}">
+    <div class="col-12 p-2">
+      <!-- Select-style input for dropdown -->
+      <label for="selectDropdown" class="mx-1">Appointments for</label>
+      <input type="text" class="form-control dropdown-toggle" id="selectDropdown" name="doctor" value="{{currentdoc}}" data-bs-toggle="dropdown" aria-expanded="false" readonly>
+      <input name="doctor_id" value="" id="doctorId" hidden/>
+      <!-- Dropdown menu structure -->
+      <ul class="dropdown-menu" aria-labelledby="selectDropdown" id="dropdown-menu">
+          <li class="px-3 py-2">
+              <input type="text" class="form-control" id="searchInput" placeholder="Search...">
+          </li>
+          <li><hr class="dropdown-divider"></li>
+          <!-- Dropdown items go here -->
+          <li><a class="dropdown-item" onclick="selectOption('All','')">All</a></li>
+          {% for doctor in doctors %}
+          <li><a class="dropdown-item" onclick="selectOption('{{doctor.first_name}} {{doctor.last_name}}','{{doctor.id}}')">{{doctor.first_name}} {{doctor.last_name}}</a></li>
+          {% endfor %}
+      </ul>
+    </div>
+  </form>
+
+  <table class="table mt-4">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Patient</th>
+        <th scope="col">Doctor</th>
+        <th scope="col">Date | Session</th>
+        <th scope="col">Status</th>
+        <th scope="col">Doctor's Note</th>
+        <th scope="col">Feedback</th>
+        <th scope="col">Cancel</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for appointment in appointments %}
+      <tr>
+        <th scope="row">{{forloop.counter}}</th>
+        <td>{{appointment.patient.first_name}} {{appointment.patient.last_name}}</td>
+        <td>Dr. {{appointment.slot.doctor.user.first_name}} {{appointment.slot.doctor.user.last_name}}</td>
+        <td>{{appointment.date}} | {{appointment.slot.session}}</td>
+        <td class="{% if appointment.stat == 'CONFIRMED' %} text-success
+                                     {% elif appointment.stat == 'CANCELLED' %} text-danger
+                                     {% endif %}">{{appointment.stat}}</td>
+        {% if appointment.doctorsnote == '' %}
+        <td>NA</td>
+        {% else %}
+        <td>
+          <a href="{% url 'doctorsnote' apt_id=appointment.id %}" class="btn btn-outline-primary border-0 px-1 py-0 m-0">Show</a>
+        </td>
+        {% endif %}
+
+        {% if appointment.feedback == '' %}
+        <td>NA</td>
+        {% else %}
+        <td>
+          <a href="{% url 'readfeedback' apt_id=appointment.id %}" class="btn btn-outline-primary border-0 px-1 py-0 m-0">Show</a>
+        </td>
+        {% endif %}
+
+        {% if appointment.stat == 'CONFIRMED' %}
+        <td>
+          <a href="{% url 'canapt' apt_id=appointment.id %}" class="btn btn-danger btn-sm px-3 rounded">
+            X
+          </button>
+        </td>
+        {% else %}
+        <td>
+          <a class="btn btn-secondary btn-sm px-3 rounded">
+            X
+          </button>
+        </td>
+        {% endif %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}
+
+
+{% block jscript %}
+<!-- Bootstrap JS and Popper.js dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+
+<!-- JavaScript for filtering dropdown items and selecting an option -->
+<script>
+// JavaScript to filter dropdown items based on search input
+document.getElementById('searchInput').addEventListener('input', function() {
+    const filter = this.value.toLowerCase();
+    const items = document.querySelectorAll('#dropdown-menu .dropdown-item');
+
+    items.forEach(item => {
+        if (item.textContent.toLowerCase().includes(filter)) {
+            item.style.display = '';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+});
+
+// JavaScript to handle selecting an option
+function selectOption(value,doctor_id) {
+    document.getElementById('selectDropdown').value = value;
+    document.getElementById('doctorId').value = doctor_id ;
+    var form=document.getElementById('selectDoctor');
+    form.submit();
+}
+</script>
+{% endblock %}

@@ -12,4 +12,4 @@ class UserInfo(models.Model):
     return self.user.username
   
   class Meta:
-    verbose_name = ("user")
+    verbose_name = ("userinfo")

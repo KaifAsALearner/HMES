@@ -8,22 +8,21 @@ from appointment.models import *
 
 # Create your views here.
 @login_required(login_url='/login/')
-def patient_db(request):
+def patient_db(request,chosenfield):
   sidefields= ['User Profile', 'Members', 'Appointments']
-  chosenfield= 1
   context= {
     'sidefields': sidefields,
-    'chosenfield': 1,
+    'chosenfield': chosenfield,
     'userInfo': UserInfo.objects.filter(user= request.user)[0],
     'patients': Patient.objects.filter(user= request.user).order_by('first_name','last_name'),
     'appointments': Appointment.objects.filter(patient__user= request.user).order_by('-date')
   }
-  if not request.GET.get('fieldselected') == None:
-    information=request.GET
-    chosenfield=int(information.get('fieldselected')[0])
-    context['chosenfield']= chosenfield
-    templte="field"+chr(chosenfield + 48)+".html"
-    return render(request, templte, context)
+  # if not request.GET.get('fieldselected') == None:
+  #   information=request.GET
+  #   chosenfield=int(information.get('fieldselected')[0])
+  #   context['chosenfield']= chosenfield
+  #   templte="field"+chr(chosenfield + 48)+".html"
+  #   return render(request, templte, context)
   
   templte="field"+chr(chosenfield + 48)+".html"
   return render(request, templte, context)
@@ -54,7 +53,7 @@ def addapatient(request):
 
     if request.GET.get('next') != None:
       return redirect(request.GET.get('next'))  
-    return redirect('/dashboard/p/')
+    return redirect('patient_db',2)
 
   return render(request, 'addapatient.html')
 
@@ -64,6 +63,7 @@ def doctorsnote(request,apt_id):
     'name': appointment.patient.first_name+' '+appointment.patient.last_name,
     'doctor': appointment.slot.doctor.user.first_name+' '+appointment.slot.doctor.user.last_name,
     'dateandtime': (appointment.date).strftime('%d %B %Y | %A'),
-    'note': appointment.doctorsnote
+    'note': appointment.doctorsnote,
+    'tests': appointment.test.all,
   }
   return render(request,'doctornote.html',context)

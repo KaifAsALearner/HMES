@@ -12,9 +12,9 @@ def home(request):
 def dashboard(request):
   role= UserInfo.objects.filter(user = request.user)[0].role_def
   if role == 'PATIENT':
-    return redirect('patient_db')
+    return redirect('patient_db',1)
   elif role == 'DOCTOR':
     doctor= Doctor.objects.filter(user=request.user).first()
     return redirect('doctor-dashboard',pk=doctor.id)
   else :
-    return redirect('/')
+    return redirect('staff_db',1)

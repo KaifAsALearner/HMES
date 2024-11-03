@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from doctor.models import Doctor, AppointmentSlot
+from django.contrib.auth.decorators import login_required
 from patient.models import *
 from .models import *
 from collections import OrderedDict, defaultdict
@@ -40,7 +41,7 @@ def tuple_formatting(list_tuple):
     for key, value, id in list_tuple:
         if key not in result:
             result[key] = {}
-        current=Appointment.objects.filter(slot__id=id,date__gt=today).count()
+        current=Appointment.objects.filter(slot__id=id,date__gt=today,stat='CONFIRMED').count()
         maxim=AppointmentSlot.objects.filter(id=id).first().max_bookings
         avail= current<maxim
         result[key][value]={'id':id,'available':avail}
@@ -54,17 +55,13 @@ def finddate(day):
     date_today= date.today()
     today_no= date_today.weekday()
     day_no= weekdays.index(day)
-    print(today_no)
-    print(day)
-    print(day_no)
     delta= day_no-today_no
     if delta <= 0:
         delta=7+delta
-    print(delta)
     required_date= date_today+timedelta(days=delta)
     return required_date
     
-
+@login_required(login_url='/login/')
 def book_appointment(request, doctor_id):
     # Get all doctors for the initial selection
     doctor= Doctor.objects.filter(id= doctor_id).first()
@@ -116,8 +113,7 @@ def update_feedback(request,pk):
         form = FeedbackForm(request.POST,instance=appointment)
         if form.is_valid():
             form.save()
-            patient = appointment.patient
-            return redirect('patient_db')
+            return redirect('patient_db',3)
 
 
     context={'form':form}
@@ -134,7 +130,8 @@ def cancelappointment(request, apt_id):
         pk=Doctor.objects.filter(user=request.user).first().id
         return redirect('doctor-dashboard',pk=pk)
     
-    return redirect('patient_db')
+
+    return redirect('patient_db',3)
 
 def completeappointment(request, apt_id):
     appointment=Appointment.objects.filter(id=apt_id).first()
@@ -142,3 +139,13 @@ def completeappointment(request, apt_id):
     appointment.save()
     pk=appointment.slot.doctor.id
     return redirect('doctor-dashboard',pk=pk)
+
+def readfeedback(request,apt_id):
+  appointment=Appointment.objects.filter(id=apt_id).first()
+  context={
+    'name': appointment.patient.first_name+' '+appointment.patient.last_name,
+    'doctor': appointment.slot.doctor.user.first_name+' '+appointment.slot.doctor.user.last_name,
+    'dateandtime': (appointment.date).strftime('%d %B %Y | %A'),
+    'note': appointment.feedback
+  }
+  return render(request,'feedbackread.html',context)

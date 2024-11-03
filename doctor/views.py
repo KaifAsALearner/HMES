@@ -10,6 +10,8 @@ from .forms import *
 from django.utils import timezone
 from datetime import date
 from collections import OrderedDict
+from hospital_test.models import *
+from django.contrib import messages
 
 # Create your views here.
 def doctor(request):
@@ -30,13 +32,26 @@ def doctor(request):
 def doctor_dashboard(request,pk):
     doctor=Doctor.objects.get(id=pk)
     appointments = Appointment.objects.filter(slot__doctor=doctor, date=date.today(), stat= 'CONFIRMED').order_by('-date')
+    tests = Test.objects.all()
     if request.method == "POST":
         appointment_id = request.POST.get('appointment_id')
-        appointment = Appointment.objects.filter(id = appointment_id).first()
-        appointment.doctorsnote = request.POST.get('doctor_note')
-        appointment.save()
-        return redirect('doctor-dashboard',pk=doctor.id)
-    context={'doctor':doctor,'appointments':appointments}
+        appointment = Appointment.objects.filter(id=appointment_id).first()
+        if request.POST.get('doctor_note') is not None:
+           
+            appointment.doctorsnote = request.POST.get('doctor_note')
+            appointment.save()
+
+        elif request.POST.get('test') is not None:
+                test_name = request.POST.get('test').strip()  
+                test = Test.objects.filter(name=test_name).first()
+                if test:
+                    appointment.test.add(test)
+                    messages.success(request, "Test Added!")
+                else:
+                    messages.error(request, "Test not available!")
+
+        return redirect('doctor-dashboard', pk=doctor.id)
+    context={'doctor':doctor,'appointments':appointments,'tests':tests}
     return render(request,'doctor_dashboard.html',context)
 
 def tuple_formatting(tuple_list):
@@ -80,9 +95,15 @@ def doctor_update(request,pk):
     return render(request,'doctor_update.html',context)
 
 def appointment_overview(request,pk):
+    q=request.GET.get('q') if (request.GET.get('q')!=None) else ''
     doctor=Doctor.objects.get(id=pk)
-    appointments = Appointment.objects.filter(slot__doctor=doctor, ).order_by('-date')
-    context={'appointments':appointments,'doctor':doctor}
+    tests = Test.objects.all()
+    appointments = Appointment.objects.filter(slot__doctor=doctor,stat__icontains=q)
+    appointment_cancelled = Appointment.objects.filter(slot__doctor=doctor,stat='CANCELLED').count()
+    appointment_confirmed = Appointment.objects.filter(slot__doctor=doctor,stat='CONFIRMED').count()
+    appointment_completed = Appointment.objects.filter(slot__doctor=doctor,stat='COMPLETED').count()
+    appointment_total=Appointment.objects.filter(slot__doctor=doctor).count()
+    context={'appointments':appointments,'doctor':doctor,'test':tests,'appointment_cancelled':appointment_cancelled,'appointment_confirmed':appointment_confirmed,'appointment_completed':appointment_completed,'appointment_total':appointment_total}
     return render(request,'appointment_overview.html',context)
 
 def doctor_note(request,pk):
@@ -101,3 +122,9 @@ def doctor_feedback(request,pk):
     appointments = Appointment.objects.filter(slot__doctor = doctor )
     context={'appointments':appointments,'doctor':doctor}
     return render(request,'feedback_page.html',context)
+def confirmation(request,pk):
+    appointment = Appointment.objects.get(id=int(pk))
+    doctor = appointment.slot.doctor
+    str=request.GET.get('q')
+    context={'str':str,'appointment':appointment,'doctor':doctor}
+    return render(request,'confirmation.html',context)
