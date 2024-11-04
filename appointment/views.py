@@ -136,6 +136,8 @@ def cancelappointment(request, apt_id):
         pk=Doctor.objects.filter(user=request.user).first().id
         return redirect('doctor-dashboard',pk=pk)
     
+    if role == 'STAFF':
+        return redirect('staff_db',3)
 
     return redirect('patient_db',3)
 

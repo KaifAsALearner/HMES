@@ -8,6 +8,7 @@ from datetime import date
 from hospital_test.models import *
 from .forms import *
 from hmes.decorator import *
+from auditlog.models import LogEntry
 
 @login_required(login_url='login_page')
 @role_required(['STAFF'])
@@ -70,7 +71,7 @@ def builddoctors(doctorstuple):
 @login_required(login_url='login_page')
 @role_required(['STAFF'])
 def staff_db(request,chosenfield):
-    sidefields= ['User Profile', 'Doctors', 'Appointments','Tests']
+    sidefields= ['User Profile', 'Doctors', 'Appointments','Tests','Audit']
     doctors= Doctor.objects.all().values_list('id','user__first_name','user__last_name')
     doctors=builddoctors(doctors)
     context= {
@@ -81,13 +82,8 @@ def staff_db(request,chosenfield):
     'appointments':Appointment.objects.all(),
     'currentdoc':'All',
     'tests': Test.objects.all(),
+    'logs': LogEntry.objects.all().order_by('-timestamp'),
     }
-    # if not request.GET.get('fieldselected') == None:
-    #   information=request.GET
-    #   chosenfield=int(information.get('fieldselected')[0])
-    #   context['chosenfield']= chosenfield
-    #   templte="field"+chr(chosenfield + 48)+".html"
-    #   return render(request, templte, context)
     if request.GET and chosenfield == 3 :
         information=request.GET
         doctor_id=information.get('doctor_id')
@@ -97,6 +93,9 @@ def staff_db(request,chosenfield):
         else:
             context['currentdoc']=information.get('doctor')
             context['appointments']=Appointment.objects.filter(slot__doctor__id=doctor_id)
+
+    if request.GET and chosenfield == 5 :
+        context['logs']= LogEntry.objects.all().order_by('-timestamp')
 
     templte="staff"+chr(chosenfield + 48)+".html"
     return render(request, templte, context)
